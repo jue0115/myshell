@@ -163,10 +163,10 @@ function Start() {
     DMIRROR="--mirror http://mirrors.aliyun.com/debian/"
     UMIRROR="--mirror http://mirrors.aliyun.com/ubuntu/"
   else
-    CMIRROR="--mirror http://mirrors.aliyun.com/centos/"
+    CMIRROR="--mirror http://mirror.centos.org/centos"
     CVMIRROR="--mirror http://mirrors.tuna.tsinghua.edu.cn/centos-vault/"
-    DMIRROR="--mirror http://mirrors.aliyun.com/debian/"
-    UMIRROR="--mirror http://mirrors.aliyun.com/ubuntu/"
+    DMIRROR="--mirror http://deb.debian.org/debian/"
+    UMIRROR="--mirror http://archive.ubuntu.com/ubuntu/"
   fi
 
   sed -i 's/$1$4BJZaD0A$y1QykUnJ6mXprENfwpseH0/$1$7R4IuxQb$J8gcq7u9K0fNSsDNFEfr90/' /tmp/InstallNET.sh
