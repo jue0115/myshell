@@ -156,7 +156,7 @@ function Start() {
   CMIRROR=''
   CVMIRROR=''
   DMIRROR=''
-  UMIRROR="--mirror http://mirrors.aliyun.com/ubuntu/"
+  UMIRROR="--mirror http://archive.ubuntu.com/ubuntu"
   if [[ "$isCN" == '1' ]];then
     CMIRROR="--mirror http://mirrors.aliyun.com/centos/"
     CVMIRROR="--mirror http://mirrors.tuna.tsinghua.edu.cn/centos-vault/"
