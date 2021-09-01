@@ -1,5 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 
+#========================================================
+#open ssh
+#========================================================
 sed 's/#PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config -i
 sed 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config -i
 sed 's/#PasswordAuthentication yes/PasswordAuthentication yes/g' /etc/ssh/sshd_config -i
