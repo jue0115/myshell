@@ -8,7 +8,7 @@ Type=oneshot
 RemainAfterExit=yes
 #systemctl restart wondershaper
 #File=/etc/systemd/system/wondershaper.service
-ExecStart=/opt/wondershaper -a eth0 -d 153600 -u 153600
+ExecStart=/opt/wondershaper -a eth0 -d 163840 -u 163840
 ExecStop=/opt/wondershaper -c -a eth0
 
 [Install]
