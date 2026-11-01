@@ -160,6 +160,7 @@ function NetMode() {
 function RHELImageBootConf() {
   touch /tmp/bootconf.sh
   echo '#!/bin/sh'>/tmp/bootconf.sh
+  printf "hostnamectl set-hostname '%s'\n" "$ORIGINAL_HOSTNAME" >>/tmp/bootconf.sh
 
   staticIp='1'
   if [ "$isAuto" == '1' ]; then
@@ -200,6 +201,33 @@ EOF
   }
 }
 
+function PreserveHostname() {
+  local installer=${1:-/tmp/InstallNET.sh} label
+  local -a labels
+  ORIGINAL_HOSTNAME=$(hostname) || return 1
+  if [[ -z $ORIGINAL_HOSTNAME || ${#ORIGINAL_HOSTNAME} -gt 253 || $ORIGINAL_HOSTNAME == *. ]]; then
+    echo "Error: invalid current hostname: $ORIGINAL_HOSTNAME" >&2
+    return 1
+  fi
+  IFS=. read -r -a labels <<< "$ORIGINAL_HOSTNAME"
+  for label in "${labels[@]}"; do
+    if [[ ! $label =~ ^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$ ]]; then
+      echo "Error: invalid current hostname: $ORIGINAL_HOSTNAME" >&2
+      return 1
+    fi
+  done
+  local short_name=${ORIGINAL_HOSTNAME%%.*} domain=''
+  [[ $ORIGINAL_HOSTNAME == *.* ]] && domain=${ORIGINAL_HOSTNAME#*.}
+  if ! grep -Fq 'hostname=$linux_relese domain=$linux_relese' "$installer" ||
+     ! grep -q '^d-i netcfg/choose_interface ' "$installer"; then
+    echo "Error: InstallNET.sh hostname configuration has changed." >&2
+    return 1
+  fi
+  sed -i "s/hostname=\$linux_relese domain=\$linux_relese/hostname=$short_name domain=$domain/g" "$installer" || return 1
+  # netcfg/hostname overrides names supplied by DHCP or reverse DNS.
+  sed -i "/^d-i netcfg\/choose_interface /i\\d-i netcfg/get_hostname string $short_name\nd-i netcfg/get_domain string $domain\nd-i netcfg/hostname string $ORIGINAL_HOSTNAME" "$installer"
+}
+
 function Start() {
   CopyRight
 
@@ -227,6 +255,8 @@ function Start() {
     exit 1
   fi
   chmod 755 /tmp/InstallNET.sh
+  PreserveHostname || exit 1
+  echo "Hostname after reinstall: $ORIGINAL_HOSTNAME"
   #curl -sSL -o /tmp/InstallNET.sh 'https://cdn.jsdelivr.net/gh/MoeClub/Note@latest/InstallNET.sh' && chmod a+x /tmp/InstallNET.sh
 
   CMIRROR=''
